@@ -1,0 +1,35 @@
+#!/bin/sh
+
+USER=$1
+if [ "x${USER}" = "x" ]; then
+    echo "plz pass the target"
+    exit 1
+fi
+
+KUBE_DEPLOY_SECRET_NAME=`kubectl get sa ${USER} -o jsonpath='{.secrets[0].name}'`
+CURRENT=`kubectl config current-context`
+KUBE_API_EP=`kubectl config view -o json | \
+    jq -r ".clusters[] | select(.name == \"${CURRENT}\") | .cluster.server"`
+KUBE_API_TOKEN=`kubectl get secret ${KUBE_DEPLOY_SECRET_NAME} -o jsonpath='{.data.token}' | base64 --decode`
+KUBE_API_CERT=`kubectl get secret ${KUBE_DEPLOY_SECRET_NAME} -o jsonpath='{.data.ca\.crt}'`
+
+cat << EOS
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: ${KUBE_API_CERT}
+    server: ${KUBE_API_EP}
+  name: ${CURRENT}
+contexts:
+- context:
+    cluster: ${CURRENT}
+    user: ${USER}
+  name: ${USER}@${CURRENT}
+current-context: ${USER}@${CURRENT}
+kind: Config
+preferences: {}
+users:
+- name: ${USER}
+  user:
+    token: ${KUBE_API_TOKEN}
+EOS
