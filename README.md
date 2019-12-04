@@ -1,7 +1,7 @@
 # Export kubernetes configuration
 
 ## Overview
-This function exports settings for service users to use kubectl
+This is a kubectl plugin that exports config to use kubectl as a service user.
 
 ## Install
 - Execute the folloing command. (path is an example.)
