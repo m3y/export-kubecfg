@@ -1,8 +1,7 @@
 # Export kubernetes configuration
 
-## Requirement
-- kubectl
-- jq
+## Overview
+This function exports settings for service users to use kubectl
 
 ## Install
 - Execute the folloing command. (path is an example.)
@@ -13,3 +12,7 @@ $ cp kubectl-export_kubecfg /usr/local/bin/kubectl-export_kubecfg
 $ chmod +x /usr/local/bin/kubectl-export_kubecfg
 $ kubectl plugin list
 ```
+
+## Requirement
+- kubectl
+- jq
